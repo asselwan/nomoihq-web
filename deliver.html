@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e9">
+  <title>NOMOI HQ | Your brief</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    :root{--paper:#f4f1e9;--ink:#1b1a17;--line:#d8d2c0;--card:#ffffff;--dim:#6b6555;--green:#1f7a4d;--amber:#a4700f;--red:#b3341f}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 ui-serif,Georgia,"Times New Roman",serif}
+    .wrap{max-width:760px;margin:auto;padding:0 20px}
+    header.top{display:flex;justify-content:space-between;align-items:baseline;padding:28px 0;border-bottom:2px solid var(--ink)}
+    .brand{font:900 20px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.08em;color:var(--ink);text-decoration:none;text-transform:uppercase}
+    .brand span{color:var(--dim);font-weight:600;text-transform:none}
+    main{padding:6vh 0 80px}
+    .status{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:28px;margin-bottom:20px}
+    .tag{display:inline-flex;align-items:center;gap:8px;font:800 12px ui-sans-serif,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:2px;padding:5px 10px}
+    .dot{display:inline-block;width:9px;height:9px;border-radius:50%}
+    .dot.g{background:var(--green)} .dot.a{background:var(--amber)} .dot.r{background:var(--red)} .dot.p{background:var(--dim)}
+    h1{font-size:26px;margin:16px 0 6px}
+    .msg{color:var(--dim)}
+    .brief{white-space:pre-wrap;font:16px/1.6 ui-serif,Georgia,serif;margin-top:8px}
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:spin 1s linear infinite;margin-right:8px;vertical-align:middle}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+  <header class="wrap top">
+    <a class="brand" href="/">NOMOI <span>HQ</span></a>
+  </header>
+  <main class="wrap">
+    <div class="status" id="status">
+      <span class="tag"><span class="spinner"></span>Checking order</span>
+      <h1>Loading your brief</h1>
+      <p class="msg">One moment.</p>
+    </div>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("session_id");
+    const statusBox = document.getElementById("status");
+
+    function tierDot(tier) {
+      if (tier === "GREEN") return '<span class="dot g"></span>';
+      if (tier === "AMBER") return '<span class="dot a"></span>';
+      if (tier === "RED" || tier === "INCONCLUSIVE" || tier === "FAILED") return '<span class="dot r"></span>';
+      return '<span class="dot p"></span>';
+    }
+
+    function render(data) {
+      if (data.status === "ready") {
+        statusBox.innerHTML = `
+          <span class="tag">${tierDot(data.cite_check_tier)}Cite check: ${data.cite_check_tier}</span>
+          <h1>Your brief is ready</h1>
+          <div class="brief">${data.full_markdown.replace(/</g, "&lt;")}</div>
+        `;
+        return;
+      }
+      if (data.status === "refused_refunded") {
+        statusBox.innerHTML = `
+          <span class="tag">${tierDot(data.cite_check_tier)}Cite check: ${data.cite_check_tier || "not verified"}</span>
+          <h1>This brief was refused</h1>
+          <p class="msg">${data.message}</p>
+        `;
+        return;
+      }
+      statusBox.innerHTML = `
+        <span class="tag"><span class="spinner"></span>Processing</span>
+        <h1>Your brief is being produced</h1>
+        <p class="msg">${data.message || "This page updates automatically. Standard briefs ship within 24 hours, flagship within 48."}</p>
+      `;
+    }
+
+    async function poll() {
+      if (!sessionId) {
+        statusBox.innerHTML = '<span class="tag"><span class="dot r"></span>No order</span><h1>No order found</h1><p class="msg">Start a brief from the homepage.</p>';
+        return;
+      }
+      try {
+        const response = await fetch(`/api/order/${encodeURIComponent(sessionId)}`);
+        if (response.status === 404) {
+          statusBox.innerHTML = '<span class="tag"><span class="dot r"></span>Not found</span><h1>Order not found yet</h1><p class="msg">If you just paid, this can take a few seconds. This page retries automatically.</p>';
+        } else {
+          const data = await response.json();
+          render(data);
+          if (data.status === "ready" || data.status === "refused_refunded") return;
+        }
+      } catch {
+        // network hiccup, retry on the next tick
+      }
+      setTimeout(poll, 6000);
+    }
+
+    poll();
+  </script>
+</body>
+</html>

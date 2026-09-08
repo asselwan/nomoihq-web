@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// NOMOI HQ research desk — landing page + free/paid gating.
+// NOMOI HQ research desk: landing page + free/paid gating.
 // Pattern mirrors glowhum-web/server.mjs: single file, no framework, Stripe
 // reached by fetch against the REST API, secret key from env only, never
 // printed or logged. Delivery of the full brief stays the existing async
@@ -19,6 +19,7 @@ import http from "node:http";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { makeOrderHandlers } from "./orders.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 80;
@@ -26,6 +27,9 @@ const HOST = process.env.HOST || "0.0.0.0";
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
 const STRIPE_API_BASE_URL = process.env.STRIPE_API_BASE_URL || "https://api.stripe.com/v1";
 const REPORTS_DIR = process.env.REPORTS_DIR || path.join(__dirname, "reports");
+const ORDERS_DIR = process.env.ORDERS_DIR || path.join(__dirname, "orders-data");
+const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || "";
+const orderHandlers = makeOrderHandlers(ORDERS_DIR, PUBLIC_BASE_URL);
 
 function sendJson(res, status, body) {
   const data = JSON.stringify(body);
@@ -50,6 +54,25 @@ function validSlug(slug) {
 
 function validSessionId(id) {
   return typeof id === "string" && /^cs_[A-Za-z0-9_]{8,255}$/.test(id);
+}
+
+async function readRawBody(req, maxBytes = 1024 * 1024) {
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > maxBytes) {
+      const error = new Error("Request body too large");
+      error.code = "BODY_TOO_LARGE";
+      throw error;
+    }
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
+}
+
+async function readJsonBody(req, maxBytes = 64 * 1024) {
+  return JSON.parse((await readRawBody(req, maxBytes)).toString("utf8"));
 }
 
 async function loadReport(slug) {
@@ -97,7 +120,7 @@ async function handleReport(req, res, slug, sessionId) {
   };
 
   if (report.cite_check_tier === "RED") {
-    // Quarantined — never delivered in full at any tier, paid or not.
+    // Quarantined, never delivered in full at any tier, paid or not.
     return sendJson(res, 200, { ...base, note: "This brief is quarantined pending a re-run. Full text withheld." });
   }
 
@@ -133,8 +156,29 @@ const server = http.createServer(async (req, res) => {
       return handleReport(req, res, reportMatch[1], url.searchParams.get("session_id"));
     }
 
+    if (url.pathname === "/api/checkout" && req.method === "POST") {
+      return orderHandlers.handleCheckout(req, res, readJsonBody, sendJson);
+    }
+    if (url.pathname === "/api/stripe/webhook" && req.method === "POST") {
+      return orderHandlers.handleWebhook(req, res, readRawBody, sendJson);
+    }
+    const orderMatch = url.pathname.match(/^\/api\/order\/([^/]+)$/);
+    if (orderMatch && req.method === "GET") {
+      return orderHandlers.handleOrderStatus(res, orderMatch[1], sendJson);
+    }
+    if (url.pathname === "/api/worker/claim" && req.method === "GET") {
+      return orderHandlers.handleWorkerClaim(req, res, sendJson);
+    }
+    const workerReportMatch = url.pathname.match(/^\/api\/worker\/([^/]+)\/report$/);
+    if (workerReportMatch && req.method === "POST") {
+      return orderHandlers.handleWorkerReport(req, res, workerReportMatch[1], readJsonBody, sendJson);
+    }
+
     if (url.pathname === "/" || url.pathname === "/index.html") {
       return sendFile(res, path.join(__dirname, "index.html"), "text/html; charset=utf-8");
+    }
+    if (url.pathname === "/deliver.html") {
+      return sendFile(res, path.join(__dirname, "deliver.html"), "text/html; charset=utf-8");
     }
     if (url.pathname === "/favicon.svg") {
       return sendFile(res, path.join(__dirname, "favicon.svg"), "image/svg+xml");
@@ -147,8 +191,16 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-if (process.env.NODE_ENV !== "test") {
-  server.listen(PORT, HOST, () => console.log(`NOMOI HQ listening on ${HOST}:${PORT}`));
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  server.listen(PORT, HOST, () => {
+    if (process.env.NODE_ENV !== "test") console.log(`NOMOI HQ listening on ${HOST}:${PORT}`);
+  });
 }
+
+function shutdown() {
+  server.close(() => process.exit(0));
+}
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
 
 export { server, verifyEntitlement, handleReport, validSlug, validSessionId };
