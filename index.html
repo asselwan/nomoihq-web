@@ -1,4 +1,19 @@
 <!doctype html>
+<!--
+  Design read (Mobbin pass, prm_a611c7ea, 2026-09-08): reading this as an order page for a
+  buyer who wants a verified answer, not a summary, in a paper and serif register distinct
+  from the dark and gold portfolio default (a deliberate document-desk exception, the same
+  class of intentional light counterpoint as nomoi-reach). Path form: a verdict settling into
+  place, the free finding resolving first while the locked findings stay blurred until paid.
+  References: Elicit research report with a locked reference list
+  (mobbin.com/screens/00c13c4c-e8c3-4638-8911-a77ba160421f, gather, screen, extract, generate
+  shown as a completed chain), Chronicle research storyline
+  (mobbin.com/screens/56abf5eb-2693-4142-8700-bc839cbf2316, numbered findings that read like a
+  ledger), Uxcel pricing (mobbin.com/screens/ebe13ef8-7647-4be8-831f-03a0ddc7064b, one plan
+  held forward with a clear upgrade). Ships: the verdict legend dots settling in on load, the
+  sample brief's locked findings deepening their blur on reveal instead of appearing flat, and
+  a staggered tier card entrance with real hover and focus states.
+-->
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -39,17 +54,42 @@
     .sample{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:30px;margin:0 0 40px}
     .sample .tag{display:inline-block;font:800 11px ui-sans-serif,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:2px;padding:3px 8px;margin-bottom:14px}
     .sample h3{margin:0 0 10px;font-size:22px}
-    .sample .locked{position:relative;filter:blur(3px);user-select:none;color:var(--dim)}
+    .sample .locked{position:relative;filter:blur(1.5px);user-select:none;color:var(--dim)}
     .sample .cta{margin-top:16px;font:700 14px ui-sans-serif,system-ui,sans-serif;color:var(--dim)}
     form{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:28px;margin:0 0 40px}
     form label{display:block;font:800 13px ui-sans-serif,system-ui,sans-serif;letter-spacing:.03em;margin:0 0 6px}
     form textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:3px;padding:12px;font:inherit;resize:vertical}
     form input[type=email]{width:100%;border:1px solid var(--line);border-radius:3px;padding:12px;font:16px ui-sans-serif,system-ui,sans-serif;margin-top:14px}
     form .row{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+    .tier-choice{display:flex;align-items:center;gap:6px;font:600 14px ui-sans-serif,system-ui,sans-serif;color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:9px 12px;cursor:pointer}
+    .tier-choice input{margin:0}
     form button{border:0;background:var(--ink);color:var(--paper);font:800 15px ui-sans-serif,system-ui,sans-serif;padding:13px 22px;border-radius:3px;cursor:pointer}
     .note{color:var(--dim);font-size:14px;margin-top:12px}
     footer{border-top:2px solid var(--ink);padding:26px 0;color:var(--dim);font:700 13px ui-sans-serif,system-ui,sans-serif;text-align:center}
     @media(max-width:640px){.tiers{grid-template-columns:1fr}}
+
+    /* Legendary motion pass, prm_a611c7ea: verdict-settle fingerprint. */
+    .eyebrow,.hero h1,.hero p{opacity:0;transform:translateY(14px);animation:verdictSettle .6s cubic-bezier(.16,1,.3,1) forwards}
+    .hero h1{animation-delay:.08s} .hero p{animation-delay:.16s}
+    @keyframes verdictSettle{to{opacity:1;transform:translateY(0)}}
+    .legend .dot{animation:dotSettle .5s cubic-bezier(.34,1.4,.64,1) forwards;opacity:0;transform:scale(.4)}
+    .legend span:nth-child(1) .dot{animation-delay:.3s} .legend span:nth-child(2) .dot{animation-delay:.38s} .legend span:nth-child(3) .dot{animation-delay:.46s}
+    @keyframes dotSettle{to{opacity:1;transform:scale(1)}}
+    .sample .locked{transition:filter .5s cubic-bezier(.16,1,.3,1)}
+    .sample.reveal-in .locked{filter:blur(4.5px)}
+    .tiers .card{opacity:0;transform:translateY(14px);transition:transform .18s cubic-bezier(.16,1,.3,1),border-color .15s ease}
+    .tiers.reveal-in .card{animation:verdictSettle .55s cubic-bezier(.16,1,.3,1) forwards}
+    .tiers.reveal-in .card:nth-child(1){animation-delay:.05s} .tiers.reveal-in .card:nth-child(2){animation-delay:.13s}
+    @media(hover:hover) and (pointer:fine){.card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--ink) 30%,var(--line))}}
+    .btn,form button{transition:transform .12s cubic-bezier(.16,1,.3,1),opacity .12s}
+    .btn:active,form button:active{transform:scale(.97)}
+    .tier-choice{transition:border-color .12s ease,transform .1s cubic-bezier(.16,1,.3,1)}
+    .tier-choice:active{transform:scale(.98)}
+    textarea:focus-visible,input:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+    @media(prefers-reduced-motion:reduce){
+      .eyebrow,.hero h1,.hero p,.legend .dot,.tiers .card{opacity:1!important;transform:none!important;animation:none!important}
+      .sample .locked{filter:blur(4.5px)}
+    }
   </style>
 </head>
 <body>
@@ -70,7 +110,7 @@
       <span><i class="dot r"></i>Red &mdash; held back, never delivered</span>
     </div>
 
-    <section id="sample" class="sample">
+    <section id="sample" class="sample reveal-target">
       <span class="tag">Sample brief</span>
       <h3>What changed in [topic] in the last 12 months</h3>
       <p>Verdict: three findings, each tied to a claim you can check yourself. The first is free. The full brief includes the rest, plus every citation.</p>
@@ -79,7 +119,7 @@
       <p class="cta">Get the full brief with citations below.</p>
     </section>
 
-    <div class="tiers">
+    <div class="tiers reveal-target">
       <div class="card">
         <h2>Standard brief</h2>
         <div class="price">$49<small>one time</small></div>
@@ -104,16 +144,72 @@
       </div>
     </div>
 
-    <form id="ask" action="mailto:research@nomoihq.com" method="post" enctype="text/plain">
+    <form id="ask">
       <label for="q">Ask your question</label>
-      <textarea id="q" name="question" placeholder="What decision are you trying to make, and what would change your mind?" required></textarea>
-      <input type="email" name="email" placeholder="you@company.com" required>
-      <div class="row">
-        <button type="submit">Send it in</button>
+      <textarea id="q" name="question" placeholder="What decision are you trying to make, and what would change your mind?" minlength="20" required></textarea>
+      <input type="email" id="email" name="email" placeholder="you@company.com" required>
+      <div class="row" role="radiogroup" aria-label="Brief tier">
+        <label class="tier-choice"><input type="radio" name="tier" value="standard" checked> Standard, $49</label>
+        <label class="tier-choice"><input type="radio" name="tier" value="flagship"> Flagship, $199</label>
       </div>
-      <p class="note">We reply with the free verdict first. Full briefs ship after payment, standard within 24 hours, flagship within 48.</p>
+      <div class="row">
+        <button type="submit" id="ask-submit">Pay and start the brief</button>
+      </div>
+      <p class="note" id="ask-note">Payment starts your brief. If the citation gate comes back Red, you are refunded in full and nothing is delivered.</p>
     </form>
   </main>
   <footer class="wrap">NOMOI HQ, the research desk of NOMOI. Every brief carries a Green, Amber, or Red verification tier. Red briefs are never sold.</footer>
+  <script>
+    const form = document.getElementById("ask");
+    const note = document.getElementById("ask-note");
+    const submitBtn = document.getElementById("ask-submit");
+    const defaultNote = note.textContent;
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const question = document.getElementById("q").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const tier = form.querySelector('input[name="tier"]:checked').value;
+      if (question.length < 20) {
+        note.textContent = "Ask a full question, at least 20 characters.";
+        return;
+      }
+      submitBtn.disabled = true;
+      note.textContent = "Starting checkout...";
+      try {
+        const response = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question, email, tier }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.checkout_url) {
+          note.textContent = data.error || "Checkout is not ready yet. Try again shortly.";
+          submitBtn.disabled = false;
+          return;
+        }
+        window.location.href = data.checkout_url;
+      } catch {
+        note.textContent = "Could not reach checkout. Try again shortly.";
+        submitBtn.disabled = false;
+      }
+    });
+    (function () {
+      const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const targets = document.querySelectorAll(".reveal-target");
+      if (reduce || !("IntersectionObserver" in window)) {
+        targets.forEach((el) => el.classList.add("reveal-in"));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("reveal-in");
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      targets.forEach((el) => io.observe(el));
+    })();
+  </script>
 </body>
 </html>
