@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e9">
+  <title>NOMOI HQ | Sourced and verified research</title>
+  <meta name="description" content="Ask a question. Get a verdict backed by claims you can check yourself, not a wall of prose.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    :root{--paper:#f4f1e9;--ink:#1b1a17;--line:#d8d2c0;--card:#ffffff;--dim:#6b6555;--green:#1f7a4d;--amber:#a4700f;--red:#b3341f;--accent:#1b1a17}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 ui-serif,Georgia,"Times New Roman",serif}
+    .wrap{max-width:880px;width:100%;margin:auto;padding:0 20px}
+    header.top{display:flex;justify-content:space-between;align-items:baseline;padding:28px 0;border-bottom:2px solid var(--ink)}
+    .brand{font:900 20px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.08em;color:var(--ink);text-decoration:none;text-transform:uppercase}
+    .brand span{color:var(--dim);font-weight:600;letter-spacing:.02em;text-transform:none}
+    nav a{color:var(--dim);font:700 14px/1 ui-sans-serif,system-ui,sans-serif;text-decoration:none;margin-left:18px}
+    nav a:hover{color:var(--ink)}
+    main{padding:6vh 0 80px}
+    .hero{max-width:640px;margin:0 auto 44px;text-align:center}
+    .eyebrow{font:900 13px/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+    .hero h1{font-size:clamp(34px,6vw,54px);line-height:1.08;margin:14px 0 18px;letter-spacing:-.01em}
+    .hero p{color:var(--dim);font-size:19px;margin:0 auto;max-width:560px}
+    .tiers{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:44px 0}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:28px}
+    .card h2{font:900 15px ui-sans-serif,system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;margin:0 0 6px}
+    .card .price{font:900 34px ui-sans-serif,system-ui,sans-serif;letter-spacing:-.02em;margin:10px 0}
+    .card .price small{font-size:14px;font-weight:700;color:var(--dim)}
+    .card ul{list-style:none;padding:0;margin:16px 0 22px;color:var(--dim);font-size:15px}
+    .card li{padding:7px 0;border-top:1px solid var(--line)}
+    .card li:first-child{border-top:none}
+    .btn{display:block;text-align:center;background:var(--ink);color:var(--paper);text-decoration:none;font:800 15px ui-sans-serif,system-ui,sans-serif;padding:14px 18px;border-radius:3px}
+    .btn.ghost{background:transparent;border:1px solid var(--ink);color:var(--ink)}
+    .btn:hover{opacity:.85}
+    .legend{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin:0 0 44px;font:700 13px ui-sans-serif,system-ui,sans-serif;color:var(--dim)}
+    .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+    .dot.g{background:var(--green)} .dot.a{background:var(--amber)} .dot.r{background:var(--red)}
+    .sample{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:30px;margin:0 0 40px}
+    .sample .tag{display:inline-block;font:800 11px ui-sans-serif,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:2px;padding:3px 8px;margin-bottom:14px}
+    .sample h3{margin:0 0 10px;font-size:22px}
+    .sample .locked{position:relative;filter:blur(3px);user-select:none;color:var(--dim)}
+    .sample .cta{margin-top:16px;font:700 14px ui-sans-serif,system-ui,sans-serif;color:var(--dim)}
+    form{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:28px;margin:0 0 40px}
+    form label{display:block;font:800 13px ui-sans-serif,system-ui,sans-serif;letter-spacing:.03em;margin:0 0 6px}
+    form textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:3px;padding:12px;font:inherit;resize:vertical}
+    form input[type=email]{width:100%;border:1px solid var(--line);border-radius:3px;padding:12px;font:16px ui-sans-serif,system-ui,sans-serif;margin-top:14px}
+    form .row{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+    form button{border:0;background:var(--ink);color:var(--paper);font:800 15px ui-sans-serif,system-ui,sans-serif;padding:13px 22px;border-radius:3px;cursor:pointer}
+    .note{color:var(--dim);font-size:14px;margin-top:12px}
+    footer{border-top:2px solid var(--ink);padding:26px 0;color:var(--dim);font:700 13px ui-sans-serif,system-ui,sans-serif;text-align:center}
+    @media(max-width:640px){.tiers{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="wrap top">
+    <a class="brand" href="/">NOMOI <span>HQ</span></a>
+    <nav><a href="#sample">Sample brief</a><a href="#ask">Ask a question</a></nav>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Sourced and verified research</div>
+      <h1>A verdict, not a wall of prose.</h1>
+      <p>Every claim in a NOMOI HQ brief is checked against a live source before it ships. The free preview shows the verdict. The full brief shows the receipts.</p>
+    </section>
+
+    <div class="legend">
+      <span><i class="dot g"></i>Green &mdash; every citation verified</span>
+      <span><i class="dot a"></i>Amber &mdash; 90%+ verified, gaps flagged</span>
+      <span><i class="dot r"></i>Red &mdash; held back, never delivered</span>
+    </div>
+
+    <section id="sample" class="sample">
+      <span class="tag">Sample brief</span>
+      <h3>What changed in [topic] in the last 12 months</h3>
+      <p>Verdict: three findings, each tied to a claim you can check yourself. The first is free. The full brief includes the rest, plus every citation.</p>
+      <p class="locked">Finding 2 of 3: a primary source dated and quoted, cross checked against a second independent source, with the exact passage that supports the claim.</p>
+      <p class="locked">Finding 3 of 3, the dissent record, and the full source list with dates and links.</p>
+      <p class="cta">Get the full brief with citations below.</p>
+    </section>
+
+    <div class="tiers">
+      <div class="card">
+        <h2>Standard brief</h2>
+        <div class="price">$49<small>one time</small></div>
+        <ul>
+          <li>Findings with per claim verification</li>
+          <li>Sources cited, dated, checked live</li>
+          <li>Delivered within 24 hours</li>
+          <li>Refund backed citation guarantee</li>
+        </ul>
+        <a class="btn" href="https://buy.nomoi.ai/research/standard">Order the standard brief</a>
+      </div>
+      <div class="card">
+        <h2>Flagship brief</h2>
+        <div class="price">$199<small>one time</small></div>
+        <ul>
+          <li>Everything in Standard</li>
+          <li>Adversarial red team pass on every claim</li>
+          <li>Independent model panel, dissent recorded</li>
+          <li>Full evidence trail on request</li>
+        </ul>
+        <a class="btn" href="https://buy.nomoi.ai/research/flagship">Order the flagship brief</a>
+      </div>
+    </div>
+
+    <form id="ask" action="mailto:research@nomoihq.com" method="post" enctype="text/plain">
+      <label for="q">Ask your question</label>
+      <textarea id="q" name="question" placeholder="What decision are you trying to make, and what would change your mind?" required></textarea>
+      <input type="email" name="email" placeholder="you@company.com" required>
+      <div class="row">
+        <button type="submit">Send it in</button>
+      </div>
+      <p class="note">We reply with the free verdict first. Full briefs ship after payment, standard within 24 hours, flagship within 48.</p>
+    </form>
+  </main>
+  <footer class="wrap">NOMOI HQ, the research desk of NOMOI. Every brief carries a Green, Amber, or Red verification tier. Red briefs are never sold.</footer>
+</body>
+</html>

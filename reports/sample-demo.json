@@ -1,0 +1,12 @@
+{
+  "slug": "sample-demo",
+  "title": "Demo fixture, proves the free/paid gate shape, not a real research brief",
+  "tier_required": "standard_49",
+  "cite_check_tier": "GREEN",
+  "free_summary": "This is the free preview text: the verdict line and finding one, with no citation attached. This report id exists to prove the /api/report/:slug route and the Stripe entitlement check work end to end, before the first real brief is minted through it.",
+  "full_markdown": "## Findings\n\n1. Finding one (repeated here because the paid view carries everything the free view carries, plus the rest).\n2. Finding two, cited to rsrc_demo_001.\n3. Finding three, cited to rsrc_demo_002.\n\n## Contradictions\n\n- None surfaced in the mapped corpus.",
+  "citations": [
+    { "id": "rsrc_demo_001", "url": "https://example.com/demo-source-one", "title": "Demo source one", "retrieved": "2026-09-09" },
+    { "id": "rsrc_demo_002", "url": "https://example.com/demo-source-two", "title": "Demo source two", "retrieved": "2026-09-09" }
+  ]
+}
